@@ -4,6 +4,26 @@
         <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
         <title>#exosamsi Detrending Visualizations</title>
+
+        <style>
+
+            .axis line,
+            .axis path {
+                fill: none;
+                stroke: #111;
+            }
+
+            .axis text {
+                font-family: "Helvetica Neue", Helvetica, sans-serif;
+                font-size: 11px;
+            }
+
+            .datapoint {
+                fill: #111;
+                opacity: 0.5;
+            }
+
+        </style>
     </head>
     <body>
 
@@ -17,7 +37,10 @@
 
     var i, l;
     var methods = ["sap", "pdc", "untrendy"],
-        datasets = {};
+        datasets = [];
+
+    var chartfn = Chart().x(function (d) { return d.kbjd; })
+                         .y(function (d) { return d.flux; });
 
     function display (dsname) {
         var thisdsname = dsname;
@@ -26,10 +49,18 @@
             datasets[thisdsname] = data;
 
             // Exit if all the datasets aren't in yet.
-            for (i = 0, l = methods.length; i < l; ++i)
+            var plt_datasets = [];
+            for (i = 0, l = methods.length; i < l; ++i) {
                 if (typeof datasets[methods[i]] == "undefined") return;
+                plt_datasets.push(datasets[methods[i]]);
+            }
 
-            console.log(datasets);
+            // Build the plots.
+            var els = d3.select("#plot").selectAll(".lineplot")
+                                        .data(plt_datasets);
+            els.enter().append("div").attr("class", "lineplot");
+            els.call(chartfn);
+            els.exit().remove();
         }
     }
 
