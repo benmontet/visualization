@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+        <title>#exosamsi Detrending Visualizations</title>
+    </head>
+    <body>
+
+        <div id="plot"></div>
+
+<script src="lib/d3.v3.min.js"></script>
+<script src="lib/plot.js"></script>
+<script>
+
+(function () {
+
+    var i, l;
+    var methods = ["sap", "pdc", "untrendy"],
+        datasets = {};
+
+    function display (dsname) {
+        var thisdsname = dsname;
+        return function (data) {
+            // Save this dataset.
+            datasets[thisdsname] = data;
+
+            // Exit if all the datasets aren't in yet.
+            for (i = 0, l = methods.length; i < l; ++i)
+                if (typeof datasets[methods[i]] == "undefined") return;
+
+            console.log(datasets);
+        }
+    }
+
+    // Get the data.
+    for (i = 0, l = methods.length; i < l; ++i) {
+        d3.csv("data/"+methods[i]+"/demo.txt", display(methods[i]));
+    }
+
+})();
+
+</script>
+
+    </body>
+</html>
