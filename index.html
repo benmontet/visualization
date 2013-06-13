@@ -23,6 +23,17 @@
                 opacity: 0.5;
             }
 
+            .bar {
+                fill: #222;
+                opacity: 0.5;
+            }
+
+            .gaussline {
+                fill: none;
+                stroke: steelblue;
+                stroke-width: 2px;
+            }
+
         </style>
     </head>
     <body>
@@ -46,7 +57,13 @@
         var thisdsname = dsname;
         return function (data) {
             // Save this dataset.
-            datasets[thisdsname] = data;
+            datasets[thisdsname] = data.filter(function (d) {
+                for (var k in d) if (isNaN(d[k])) return false;
+                return true;
+            }).map(function (d) {
+                for (var k in d) d[k] = parseFloat(d[k]);
+                return d;
+            });
 
             // Exit if all the datasets aren't in yet.
             var plt_datasets = [];
